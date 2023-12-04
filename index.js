@@ -1,7 +1,8 @@
 // index.js
-
+const cors = require('cors');
 const express = require("express");
 const app = express();
+app.use(cors());
 const mongoose = require("mongoose");
 const {
   createPlayer,
@@ -80,7 +81,7 @@ app.delete("/players/:id", async (req, res) => {
   }
 });
 
-const PORT = 3006;
+const PORT = 3004;
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
