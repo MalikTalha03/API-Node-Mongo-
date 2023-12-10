@@ -1,119 +1,77 @@
-const apiUrl = 'https://booksproject-osq6031bw-bisma-aslams-projects.vercel.app/api/books';
+urlg = "https://api-node-mongo.vercel.app/players";
+function getScores() {
+  console.log("test ");
+  fetch(urlg, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json; charset=UTF-8",
+    },
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    })
+    .then((data) => {
+      const sc = document.getElementById("table");
+      sc.innerHTML = `<tr>
+                                <td class = "bold">Name</td>
+                                <td class = "bold">Score</td>
+                                <td>Operation</td>
+                            </tr>`;
+      data.forEach((element) => {
+        console.log("test data rec");
 
-async function displayBooks() {
-    try {
-        console.log('Fetching books...');
-        const response = await fetch( apiUrl);
-        // ... rest of the code
-    } catch (error) {
-        console.error(error);
-    }
-}
-
-async function addBook() {
-    try {
-        console.log('Adding book...');
-        const title = document.getElementById('title').value;
-        const author = document.getElementById('author').value;
-
-        const response = await fetch(  apiUrl, {
-            method: 'POST',
+        const tr = document.createElement("tr");
+        const td1 = document.createElement("td");
+        const td2 = document.createElement("td");
+        const td3 = document.createElement("td");
+        const delbtn = document.createElement("button");
+        const editbtn = document.createElement("button");
+        td1.innerHTML = element.Name;
+        td2.innerHTML = element.scores;
+        tr.elementId = element._id;
+        tr.appendChild(td1);
+        tr.appendChild(td2);
+        delbtn.innerHTML = "Delete";
+        editbtn.innerHTML = "Edit";
+        td3.appendChild(delbtn);
+        td3.appendChild(editbtn);
+        tr.appendChild(td3);
+        delbtn.addEventListener("click", () => {
+          fetch(urlg + "/" + element._id, {
+            method: "DELETE",
             headers: {
-                'Content-Type': 'application/json',
+              "Content-Type": "application/json; charset=UTF-8",
             },
-            body: JSON.stringify({ title, author }),
-        });
-
-        // ... rest of the code
-    } catch (error) {
-        console.error(error);
-    }
+          });
+          getScores();
+        }); 
+        sc.appendChild(tr);
+      });
+    });
 }
 
-// ... rest of the code
+document.getElementById("post").addEventListener("click", () => {
+  const name = document.getElementById("name").value;
+  const score = document.getElementById("score").value;
 
-
-async function addBook() {
-    try {
-        console.log('Adding book...');
-        const title = document.getElementById('title').value;
-        const author = document.getElementById('author').value;
-
-        const response = await fetch('https://booksproject-osq6031bw-bisma-aslams-projects.vercel.app/api/books', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ title, author })
-        });
-
-        console.log('Add Book Response:', response);
-
-        if (!response.ok) {
-            throw new Error(`Failed to add book: ${response.statusText}`);
-        }
-
-        document.getElementById('title').value = '';
-        document.getElementById('author').value = '';
-        displayBooks();
-    } catch (error) {
-        console.error(error);
-    }
-}
-
-async function deleteBook(bookId) {
-    try {
-        console.log('Deleting book...');
-        const response = await fetch(`https://booksproject-osq6031bw-bisma-aslams-projects.vercel.app/api/books/${bookId}`, {
-            method: 'DELETE'
-        });
-
-        console.log('Delete Book Response:', response);
-
-        if (!response.ok) {
-            throw new Error(`Failed to delete book: ${response.statusText}`);
-        }
-
-        displayBooks();
-    } catch (error) {
-        console.error(error);
-    }
-}
-
-function editBook(id, title, author) {
-    document.getElementById('title').value = title;
-    document.getElementById('author').value = author;
-
-    const addButton = document.querySelector('#addBookForm button');
-    addButton.textContent = 'Update Book';
-    addButton.onclick = async () => {
-        try {
-            console.log('Updating book...');
-            const response = await fetch(`https://booksproject-osq6031bw-bisma-aslams-projects.vercel.app/api/books/${id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ title: document.getElementById('title').value, author: document.getElementById('author').value })
-            });
-
-            console.log('Update Book Response:', response);
-
-            if (!response.ok) {
-                throw new Error(`Failed to update book: ${response.statusText}`);
-            }
-
-            document.getElementById('title').value = '';
-            document.getElementById('author').value = '';
-            addButton.textContent = 'Add Book';
-            addButton.onclick = addBook;
-
-            displayBooks();
-        } catch (error) {
-            console.error(error);
-        }
-    };
-}
-
-// Initial display of books
-displayBooks();
+  fetch(urlg, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json; charset=UTF-8",
+    },
+    body: JSON.stringify({ Name: name, scores: score }),
+    success: function (data) {
+      console.log(data);
+    },
+    error: function (error) {
+      console.log(error);
+    },
+  });
+  document.getElementById("name").value = "";
+  document.getElementById("score").value = "";
+  getScores();
+});
+getScores();
